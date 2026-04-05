@@ -1,3 +1,7 @@
+/* 语音游戏页面实现
+ * 展示游戏音效图标列表，点击对应图标即播放预设的音效文件。
+ * 点击图标时有放大缩小动画反馈。
+ */
 #include <stdio.h>
 #include "lvgl.h"
 #include "color_conf.h"
@@ -8,6 +12,7 @@
 
 static lv_style_t com_style;
 
+/* 游戏图标信息结构体 */
 typedef struct{
     int type;
     char *img_url;

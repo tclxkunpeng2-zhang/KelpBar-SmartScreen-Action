@@ -4,6 +4,13 @@
  * @Last Modified by: xiaozhi
  * @Last Modified time: 2024-10-08 02:56:53
  */
+
+/* 下拉快捷栏实现
+ * 实现类似智能手机的下拉通知栏：
+ * - 从屏幕顶部向下滑动调出亮度/音量控制面板
+ * - 向上滑动收回面板
+ * - 支持跟手跟随和能量映射动画
+ */
 #include <stdio.h>
 #include <stdlib.h>
 #include "lvgl.h"

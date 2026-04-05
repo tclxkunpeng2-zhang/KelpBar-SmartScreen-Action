@@ -1,3 +1,8 @@
+/* 快捷键页面实现
+ * 展示最多 20 个应用图标按钮，点击后通过 USB HID 发送组合键。
+ * 每个按钮对应 Ctrl+Alt+字母 组合键，
+ * 需在电脑端配置对应快捷键映射有效。
+ */
 #include <stdio.h>
 #include "lvgl.h"
 #include "color_conf.h"

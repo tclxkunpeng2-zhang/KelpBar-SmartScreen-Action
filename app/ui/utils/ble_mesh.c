@@ -4,6 +4,10 @@
  * @Last Modified by: xiaozhi
  * @Last Modified time: 2024-09-29 01:28:10
  */
+/* BLE Mesh 通信模块实现
+ * 通过串口与 BLE 模组交互，实现主机角色的设备发现和控制。
+ * 采用双线程架构：读取线程将串口数据放入消息队列，处理线程消费队列并解析协议。
+ */
 #include <pthread.h>
 #include <stdio.h>
 #include <string.h>
@@ -160,6 +164,7 @@ static pthread_mutex_t mutex;
 static pthread_t ble_mesh_readthread;   //读取串口接收数据，发送到消息队列
 static pthread_t ble_mesh_handlethread; //读取消息队列数据，进行处理
 
+/* 串口读取线程：持续从串口读取数据并推入消息队列 */
 static void read_uart_msg_to_queue()
 {
     int ret = 1;
@@ -194,6 +199,7 @@ static void hex_to_string()
     printf("%s\n", str);
 }
 
+/* HEX字符串转字节数组：用于解析 BLE 自定义广播数据 */
 static void string_to_hex(char *input, unsigned char *output, size_t output_len)
 {
     size_t i;
@@ -465,6 +471,7 @@ static void handle_uart_msg()
     }
 }
 
+/* 发送 AT 命令并等待应答，超时重发，失败后标记 BLE 状态为 DISCONNECT */
 static bool send_cmd(uint8_t *cmd, uint8_t *ack)
 {
     int ret;
@@ -497,6 +504,7 @@ static bool send_cmd(uint8_t *cmd, uint8_t *ack)
     return false;
 }
 
+/* 初始化 BLE AT 设备：重启模组、设置主机名、广播功率、自动重连列表 */
 static void init_at_device()
 {
     char tx_buf[100];
@@ -542,6 +550,7 @@ static void init_at_device()
     get_device_state()->ble_mesh_state = ble_state;
 }
 
+/* 读取线程函数：循环读取串口数据放入消息队列 */
 static void *readthread_function(void *arg)
 {
     printf("ble mesh readthread_function run!\n");
@@ -555,6 +564,7 @@ static void *readthread_function(void *arg)
     pthread_exit(NULL);
 }
 
+/* 处理线程函数：先初始化 AT 设备，再循环处理消息队列 */
 static void *handlethread_function(void *arg)
 {
     printf("ble mesh handlethread_function run!\n");
@@ -580,11 +590,13 @@ void ble_mesh_test(){
 
 }
 
+/* 向 BLE 模组透传自定义数据包（用于控制 RGB/开关等可控设备） */
 void send_tt_cmd(uint8_t *cmd,uint8_t len){
     printf("------------>send cmd\n");
     em_hal_uart_write(dev_uart_fd, cmd, len);
 }
 
+/* 构造 RGB+开关控制帧并发送（设备类型1的控制命令格式） */
 void ctrl_rgb_and_switch(uint8_t r,uint8_t g, uint8_t b,uint8_t switch_state){
     uint8_t cmd[] = {0xaa,0x06,0x01,0x00,0x00,0x00,0x00,0x55};
     cmd[3] = r;

@@ -4,6 +4,11 @@
  * @Last Modified by: xiaozhi
  * @Last Modified time: 2024-09-26 01:14:26
  */
+
+/* 设备全局状态管理实现
+ * 负责设备状态初始化、持久化读写、1秒定时器逻辑
+ * 以及 WiFi/天气回调注册等功能。
+ */
 #include "device_data.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -18,13 +23,15 @@
 #include "page_conf.h"
 
 
+/* 定时器后端选择：默认使用 LVGL 软件定时器；若定义 USE_SYSTEM_TIMER 则使用系统 SIGALRM */
 // #define USE_SYSTEM_TIMER 1
 #ifndef USE_SYSTEM_TIMER
     #define USE_LVGL_TIMER 1
 #endif
 
-device_state_t device_state;
+device_state_t device_state; /* 全局唯一设备状态实例 */
 
+/* 内部秒/分/时计数器（随定时器每秒递增，用于触发倒计时逻辑） */
 static int time_s = 0;
 static int time_m = 0;
 static int time_h = 0;
@@ -32,6 +39,12 @@ static int time_h = 0;
 static time_t timep;
 static struct tm time_temp;
 
+/**
+ * 每秒检查各联动设备是否需要触发告警弹窗：
+ * - 人体感应检测到有人时触发告警
+ * - 智能杯垫倒计时归零时触发喝水提醒并重置倒计时
+ * - 火焰传感器倒计时归零时触发告警并重置倒计时
+ */
 static void warn_time_count_handle(){
     device_state_t* device_state = get_device_state();
     if(device_state->body_sensor_connect_state == CONNECT && device_state->body_sensor_state == ON &&  device_state->body_sensor_data == 1){
@@ -47,6 +60,11 @@ static void warn_time_count_handle(){
     }
 }
 
+/**
+ * 每分钟检查闹钟是否需要触发：
+ * - 类型1（倒计时模式）：alarm_time1 归零时触发
+ * - 类型2（定时模式）：当前时刻等于设定时刻时触发
+ */
 static void alarm_time_count_min(){
     if(device_state.is_open_type1){
         if(device_state.alarm_time1 > 0){
@@ -69,6 +87,10 @@ static void alarm_time_count_min(){
     }
 }
 
+/**
+ * 定时器每秒回调：递增秒/分/时计数，
+ * 并触发告警检查、闹钟检查、各设备倒计时递减以及番茄钟倒计时递减。
+ */
 static void timer_count(){
     time_s ++;
     warn_time_count_handle();
@@ -123,6 +145,11 @@ static void timer_handler(int signum) {
 #endif
 
 
+/**
+ * 初始化设备定时器。
+ * LVGL 模式：创建 1000ms 的 lv_timer 定时器。
+ * 系统模式：注册 SIGALRM 信号，使用 setitimer 设置 1s 周期定时器。
+ */
 void device_timer_init(){
     printf("device_timer_init\n");
 #ifdef USE_LVGL_TIMER
@@ -143,37 +170,57 @@ void device_timer_init(){
 #endif
 }
 
+/**
+ * 将当前设备状态序列化写入持久化文件 param.cfg，
+ * 使参数在重启后仍可恢复。
+ */
 void device_param_write(){
     int ret = file_param_write("param.cfg",&device_state,sizeof(device_state));
     if(ret == 0)
         printf("device_param_write success\n");
 }
 
+/**
+ * 从持久化文件 param.cfg 读取设备状态参数，
+ * 用于开机时恢复上次的配置（亮度、音量、闹钟、城市等）。
+ */
 void device_param_read(){
     int ret = file_param_read("param.cfg",&device_state,sizeof(device_state));
     if(ret == 0)
         printf("device_param_read success ble_mesh_state = %d \n",device_state.ble_mesh_state);
 }
 
+/* HTTP 天气数据回调：将返回的天气字符串存入设备状态 */
 static void weather_callback_func(char *data){
     printf("---->%s\n",data);
     strcpy(device_state.weather_info,data);
 }
 
+/* WiFi 连接状态变化回调：更新 wifi_connect_state 字段 */
 static void connect_status_callback_func(WPA_WIFI_CONNECT_STATUS_E status){
     printf("davicedata----->connect_status_callback_func: %d\n", status);
     device_state.wifi_connect_state = status;
 }
 
+/* WiFi 功能状态变化回调：更新 wifi_state 字段 */
 static void wifi_status_callback_func(WPA_WIFI_STATUS_E status){
     printf("----->wifi_status_callback_func: %d\n", status);
     device_state.wifi_state = status;
 }
 
+/* 重新注册 WiFi 状态/连接回调，供页面初始化时调用 */
 void update_wpa_manager_callback_fun(){
     wpa_manager_add_callback(wifi_status_callback_func,connect_status_callback_func);
 }
 
+/**
+ * 初始化全局设备状态：
+ * 1. 将结构体清零
+ * 2. 设置默认值（表盘类型、时钟样式、屏幕方向等）
+ * 3. 从文件读取持久化参数
+ * 4. 对不合理的值做保护（防止黑屏、音量异常等）
+ * 5. 注册 WiFi 和天气回调
+ */
 void init_device_state(){
 
     memset(&device_state,0,sizeof(device_state_t));
@@ -244,6 +291,7 @@ void init_device_state(){
     wpa_manager_add_callback(wifi_status_callback_func,connect_status_callback_func);
 }
 
+/* 获取全局设备状态指针，所有模块通过此函数访问共享状态 */
 device_state_t* get_device_state(){
     return &device_state;
 }

@@ -5,6 +5,12 @@
  * @Last Modified time: 2024-09-26 02:39:11
  */
 
+/* 主页面实现
+ * 显示时间表盘（支持数字和指针三种样式）、天气、状态图标以及底部菜单列表。
+ * 60秒无操作后自动跳转到息屏页面。
+ * 屏幕顶部下拉可唤出亮度/音量快捷栏。
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "lvgl.h"
@@ -20,13 +26,14 @@
 #include <time.h>
 #include <sys/time.h>
 
-static lv_obj_t * time_label = NULL;
-static lv_obj_t * weather_label = NULL;
-static lv_obj_t *wifi_img = NULL;
-static lv_obj_t *ble_img = NULL;
-static lv_obj_t *vol_img = NULL;
-static lv_obj_t *alarm_img = NULL;
-static int sleep_time_count = 0; //60S Sleep
+/* 页面局部静态变量 */
+static lv_obj_t * time_label = NULL;    /* 时间文字标签 */
+static lv_obj_t * weather_label = NULL; /* 天气文字标签 */
+static lv_obj_t *wifi_img = NULL;       /* WiFi 状态图标 */
+static lv_obj_t *ble_img = NULL;        /* BLE 状态图标 */
+static lv_obj_t *vol_img = NULL;        /* 音量图标 */
+static lv_obj_t *alarm_img = NULL;      /* 闹钟图标 */
+static int sleep_time_count = 0;        /* 息屏倒计时，60秒无操作后触发息屏 */
 
 static time_t timep;
 static struct tm time_temp;
@@ -92,6 +99,10 @@ static void obj_font_set(lv_obj_t *obj,int type, uint16_t weight){
         lv_obj_set_style_text_font(obj, font, 0);
 }
 
+/**
+ * 获取系统当前时间，格式化为 "HH:MM" 字符串写入 time_str。
+ * @return true 表示当天 0:00:01（用于日切天气刷新触发点）
+ */
 static bool get_system_time(){
     time(&timep);
     memcpy(&time_temp, localtime(&timep), sizeof(struct tm));
@@ -115,6 +126,13 @@ static bool get_system_time(){
     return false;
 }
 
+/**
+ * 主页 1秒刷新回调：
+ *   - 更新时间/天气文字
+ *   - 息屏倒计时递增，60秒后读入息屏页
+ *   - WiFi 首次连接后刷新天气并同步网络时间
+ *   - 更新头部状态图标（WiFi/BLE/音量/闹钟）
+ */
 static void refresh(lv_event_t* event){
     device_state_t* device_state = get_device_state();
     if(page_type == TIME_TYPE_1 || page_type == TIME_TYPE_2){
@@ -164,17 +182,20 @@ static void refresh(lv_event_t* event){
     
 }
 
+/* 创建 1s 定旲器运行主页刷新 */
 static void init_timer(){
     if(refresh_timer == NULL)
         refresh_timer = lv_timer_create((void*)refresh, 1000, NULL);
 }
 
+/* 删除定旸器防止页面退出后仍刷新 */
 static void deinit_timer(){
     if(refresh_timer != NULL)
         lv_timer_del(refresh_timer);
     refresh_timer = NULL;
 }
 
+/* 点击时间区域事件：如果 WiFi 已连接则同步 NTP 时间和天气 */
 static void time_sync_click_event_cb(lv_event_t * e){
     printf("time_sync_click_event_cb\n");
     device_state_t* device_state = get_device_state();
@@ -184,11 +205,13 @@ static void time_sync_click_event_cb(lv_event_t * e){
     }
 }
 
+/* 屏幕点击事件：重置息屏倒计旷 */
 static void screen_click_event_cb(lv_event_t * e){
     printf("screen_click_event_cb\n");
     sleep_time_count = 0;
 }
 
+/* 菜单项点击事件：根据菜单名称跳转对应页面 */
 static void menu_click_event_cb(lv_event_t * e){
     if(get_is_pull_down())
         return;

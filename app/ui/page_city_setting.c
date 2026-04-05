@@ -4,6 +4,12 @@
  * @Last Modified by: xiaozhi
  * @Last Modified time: 2024-09-25 22:46:54
  */
+
+/* 城市设置页面实现
+ * 通过滚轮选择天气查询的城市，支持全国 18 个主要城市。
+ * 选择后立即异步请求天气数据并持久化保存城市选择。
+ * 注意：苏州使用城市 ID （WTTDPCGXTWUS）查询，防止心知天气返回宿州信息。
+ */
 #include <stdio.h>
 #include "lvgl.h"
 #include "color_conf.h"

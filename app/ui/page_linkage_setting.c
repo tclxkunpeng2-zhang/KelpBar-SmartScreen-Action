@@ -4,6 +4,14 @@
  * @Last Modified by: xiaozhi
  * @Last Modified time: 2024-09-25 02:34:34
  */
+
+/* 联动设备详细设置页面实现
+ * 根据不同类型（人体感应/杯垫/火焰）展示
+ * 对应的参数设置设置滚轮，包括：
+ *   - 人体感应：设置通知方式（仅弹窗/弹窗+音效）
+ *   - 智能杯垫：设置提醒间隔时长（10-90min）
+ *   - 火焰传感器：设置监测时长（10-90min）
+ */
 #include <stdio.h>
 #include "lvgl.h"
 #include "color_conf.h"

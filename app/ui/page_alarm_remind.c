@@ -5,6 +5,11 @@
  * @Last Modified time: 2024-09-25 02:40:14
  */
 
+/* 闹钟提醒弹窗页面实现
+ * 闹钟触发后在浮层（lv_layer_top）展示提醒弹窗，
+ * 播放提醒音效，点击确定退出。
+ */
+
 #include <stdio.h>
 #include "lvgl.h"
 #include "color_conf.h"

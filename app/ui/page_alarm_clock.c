@@ -4,6 +4,13 @@
  * @Last Modified by: xiaozhi
  * @Last Modified time: 2024-09-26 02:06:34
  */
+
+/* 闹钟设置页面实现
+ * 支持两种闹钟模式：
+ *   类型1：倒计时模式（N 分钟后提醒，滚轮选择 0-60 分钟）
+ *   类型2：定时模式（选择指定时刻）
+ * 闹钟状态存储在 device_state 中，每分钟检查一次是否触发。
+ */
 #include <stdio.h>
 #include "lvgl.h"
 #include "color_conf.h"

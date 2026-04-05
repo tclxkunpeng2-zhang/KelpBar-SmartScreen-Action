@@ -1,3 +1,8 @@
+/* 文件持久化实现
+ * 采用“写写临时文件 -> fsync -> rename”的原子操作策略，
+ * 防止写入过程中断电导致文件损坏。
+ * 读取时若主文件缺失则自动尝试从备份文件恢复。
+ */
 
 #include "file_save.h"
 #include <stdio.h>
@@ -8,6 +13,10 @@
 #define PARAM_SAVE_PATH PROJECT_RES_URL
 #define PARAM_SAVE_PATH_MAX_LEN 300
 
+/**
+ * 从指定文件读取参数。
+ * 若主文件不存在但备份文件存在，先将备份文件改名为主文件再读取。
+ */
 int file_param_read(const char *name,void *data,int len){
     int fd = 0;
     int seek_offset = 0;
@@ -43,6 +52,10 @@ int file_param_read(const char *name,void *data,int len){
     return 0;
 }
 
+/**
+ * 将参数写入备份文件，写入成功后再 rename 替换主文件并调用 sync 刷盘。
+ * 这种方式确保即使写入过程中断电，主文件也不会是半写状态。
+ */
 int file_param_write(const char *name,void *data,int len){
     int fd = 0;
     int seek_offset = 0;

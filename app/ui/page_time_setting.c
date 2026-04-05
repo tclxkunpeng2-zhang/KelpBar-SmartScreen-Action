@@ -4,6 +4,12 @@
  * @Last Modified by: xiaozhi
  * @Last Modified time: 2024-09-26 01:46:05
  */
+
+/* 表盘样式设置页面实现
+ * 支持切换三种表盘显示模式：数字+天气、大字数字时邀、指针引山。
+ * 指针模式下可预览 3 种时钟样式并点击选择。
+ * 选择后保存到设备状态并返回主页。
+ */
 #include <stdio.h>
 #include "lvgl.h"
 #include "color_conf.h"

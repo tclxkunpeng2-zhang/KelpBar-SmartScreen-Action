@@ -4,6 +4,11 @@
  * @Last Modified by: xiaozhi
  * @Last Modified time: 2024-09-25 22:34:38
  */
+
+/* WiFi 设置页面实现
+ * 提供 WiFi 帐号和密码输入，点击确定后跳转到连接等待页面。
+ * 使用 LVGL 键盘组件输入 SSID 和密码，仅支持 2.4G WiFi。
+ */
 #include <stdio.h>
 #include "lvgl.h"
 #include "color_conf.h"

@@ -5,6 +5,12 @@
  * @Last Modified time: 2024-09-25 02:40:14
  */
 
+/* WiFi 连接等待页面实现
+ * 点击 WiFi 设置页面“确定”后展示此页面，显示旋转动画等待连接。
+ * 根据 WiFi 回调结果更新页面状态：连接成功/密码错误。
+ * 连接成功后自动请求天气并同步网络时间。
+ */
+
 #include <stdio.h>
 #include "lvgl.h"
 #include "color_conf.h"

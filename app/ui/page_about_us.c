@@ -4,6 +4,11 @@
  * @Last Modified by: xiaozhi
  * @Last Modified time: 2024-09-25 22:46:54
  */
+
+/* 关于页面实现
+ * 展示项目介绍信息和课程二维码
+ * 措，扫码可跳转到相关学习资源页面。
+ */
 #include <stdio.h>
 #include "lvgl.h"
 #include "color_conf.h"
@@ -60,7 +65,7 @@ static lv_obj_t * init_title_view(lv_obj_t *parent){
 
     lv_obj_t *title = lv_label_create(cont);
     obj_font_set(title,FONT_TYPE_LETTER, FONT_SIZE_TEXT_1);
-    lv_label_set_text(title,"关于智能助手屏&小智学长");
+    lv_label_set_text(title,"zkp 复刻 KelpBar 智能屏");
     lv_obj_set_style_text_color(title,APP_COLOR_WHITE,0);
     lv_obj_align_to(title,menu_img,LV_ALIGN_OUT_RIGHT_MID,20,3);
 

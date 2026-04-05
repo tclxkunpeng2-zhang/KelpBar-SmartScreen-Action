@@ -4,6 +4,16 @@
  * @Last Modified by: xiaozhi
  * @Last Modified time: 2024-09-25 19:09:33
  */
+
+/* 场景联动页面实现
+ * 展示所有 BLE Mesh 设备的连接状态和主要控制项：
+ *   - RGB LED 三题色独立开关
+ *   - Mesh 开关控制
+ *   - 人体感应功能开关
+ *   - 智能杯垫倒计时展示及设置入口
+ *   - 火焰传感器倒计时展示及设置入口
+ * 定时器每秒刷新设备状态展示（包含闪烁效果）。
+ */
 #include <stdio.h>
 #include "lvgl.h"
 #include "color_conf.h"

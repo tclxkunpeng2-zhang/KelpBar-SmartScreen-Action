@@ -5,6 +5,11 @@
  * @Last Modified time: 2024-09-26 02:26:42
  */
 
+/* 番茄钟-休息倒计时页面实现
+ * 学习时间结束后自动跳转到此页面，显示休息倒计时。
+ * 倒计时归零后自动跳转到番茄钟完成页面。
+ */
+
 #include <stdio.h>
 #include "lvgl.h"
 #include "color_conf.h"

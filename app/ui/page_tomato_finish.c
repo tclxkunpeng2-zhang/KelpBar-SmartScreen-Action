@@ -5,6 +5,11 @@
  * @Last Modified time: 2024-09-26 02:24:22
  */
 
+/* 番茄钟-本轮完成页面实现
+ * 休息倒计时结束后展示此页面，
+ * 提供“重新开始”（再运行一轮）和“今天就到这里吧”（返回主页）两个按鈕。
+ */
+
 #include <stdio.h>
 #include "lvgl.h"
 #include "color_conf.h"

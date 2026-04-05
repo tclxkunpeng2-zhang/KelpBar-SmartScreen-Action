@@ -4,6 +4,15 @@
  * @Last Modified by: xiaozhi
  * @Last Modified time: 2024-10-08 18:56:25
  */
+
+/* 系统设置页面实现
+ * 提供以下设置项：
+ *   - 屏幕亮度调节（滑块实时调整）
+ *   - 音量调节（滑块 + 音效预览）
+ *   - 屏幕方向切换（横竖屏）
+ *   - 重启设备按钮
+ * 修改后自动调用 device_param_write() 持久化保存。
+ */
 #include <stdio.h>
 #include "lvgl.h"
 #include "color_conf.h"

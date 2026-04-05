@@ -5,6 +5,12 @@
  * @Last Modified time: 2024-09-25 02:40:14
  */
 
+/* 告警弹窗页面实现
+ * 当联动设备触发告警时（人体感应/杯垫提醒/火焰告警），
+ * 展示对应图标和提示文字，并根据配置播放提示音效。
+ * 页面使用 lv_layer_top() 浮层展示，显示在其他页面之上。
+ */
+
 #include <stdio.h>
 #include "lvgl.h"
 #include "color_conf.h"
@@ -21,6 +27,7 @@ typedef struct{
     char *img_url;
 }warning_info_t;
 
+/* 告警信息列表：每种告警类型对应一条提示信息和图标 */
 static warning_info_t warning_info_list[] = {
     {WARN_BODY_SENSOR_TRIGGER,"报告:有人入侵！",GET_IMAGE_PATH("icon_body_sensor.png")},
     {WARN_SMART_COASTER_TRIGGER,"老大,到时间喝水啦！",GET_IMAGE_PATH("icon_smart_coaster.png")},
@@ -46,6 +53,7 @@ static void obj_font_set(lv_obj_t *obj,int type, uint16_t weight){
 		lv_obj_set_style_text_font(obj, font, 0);
 }
 
+/* 点击确定按钮事件：删除告警浮层页面 */
 static void select_btn_click_event_cb(lv_event_t * e){
     lv_obj_t * act_scr = page;
     lv_disp_t * d = lv_obj_get_disp(act_scr);
@@ -57,9 +65,9 @@ static void select_btn_click_event_cb(lv_event_t * e){
 	}
 }
 
+/* 初始化告警信息区域：展示告警图标和对应的提示文字 */
 static lv_obj_t * init_message_view(lv_obj_t *parent,WRANING_TYPE_E type){
     lv_obj_t * cont = lv_obj_create(parent);
-    lv_obj_set_size(cont, LV_PCT(100), LV_SIZE_CONTENT);
     lv_obj_add_style(cont, &com_style, 0);
     lv_obj_set_flex_flow(cont,LV_FLEX_FLOW_COLUMN);
     lv_obj_set_flex_align(cont,LV_FLEX_ALIGN_CENTER,LV_FLEX_ALIGN_CENTER,LV_FLEX_ALIGN_CENTER);

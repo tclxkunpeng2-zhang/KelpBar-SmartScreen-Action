@@ -4,6 +4,11 @@
  * @Last Modified by: xiaozhi
  * @Last Modified time: 2024-09-26 02:06:34
  */
+
+/* 番茄钟时长设置页面实现
+ * 通过滚轮分别设置学习时间和休息时间（1-90分钟），
+ * 点击确定后保存到设备状态并展示学习页面。
+ */
 #include <stdio.h>
 #include "lvgl.h"
 #include "color_conf.h"
@@ -14,9 +19,10 @@
 
 static lv_style_t com_style;
 
+/* 番茄钟设置类型枚举：学习时间 / 休息时间 */
 typedef enum{   
-    TOMATO_TYPE_STUDY = 0,
-    TOMATO_TYPE_REST,
+    TOMATO_TYPE_STUDY = 0,  /* 学习时间 */
+    TOMATO_TYPE_REST,       /* 休息时间 */
 }TOMATO_SETTING_PARAM_TYPE_E;
 
 

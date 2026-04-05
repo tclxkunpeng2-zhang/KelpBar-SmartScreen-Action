@@ -5,6 +5,12 @@
  * @Last Modified time: 2024-09-26 02:26:34
  */
 
+/* 番茄钟-学习倒计时页面实现
+ * 显示学习倒计时并支持暂停/恢复。
+ * 倒计时归零后自动跳转到休息页面。
+ * 倒计时数字间隔闪烁以提醒用户。
+ */
+
 #include <stdio.h>
 #include "lvgl.h"
 #include "color_conf.h"

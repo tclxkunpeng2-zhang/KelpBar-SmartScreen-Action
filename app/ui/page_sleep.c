@@ -4,6 +4,11 @@
  * @Last Modified by: xiaozhi
  * @Last Modified time: 2024-09-26 01:46:05
  */
+
+/* 息屏页面实现
+ * 主页面 60 秒无操作后自动进入息屏状态。
+ * 息屏页仍然显示时钉/天气，点击屏幕任意位置返回主页面。
+ */
 #include <stdio.h>
 #include "lvgl.h"
 #include "color_conf.h"

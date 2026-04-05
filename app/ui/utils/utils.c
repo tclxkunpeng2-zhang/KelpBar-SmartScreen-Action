@@ -4,6 +4,14 @@
  * @Last Modified by: xiaozhi
  * @Last Modified time: 2024-09-26 02:56:32
  */
+
+/* 通用工具函数实现
+ * 提供时间格式化和系统信号初始化。
+ *
+ * 时间格式说明：
+ *   get_time_str:          输出正常字符 "HH:MM"，用于默认显示状态
+ *   get_time_str_nosymbol: 将冒号替换为黑色字符，配合 LVGL recolor 实现闪烁
+ */
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -14,7 +22,8 @@
 static char time[20];
 
 /**
- * 返回分钟转换的小时、分钟字符串 单位数补0
+ * 将分钟数转换为 "HH:MM" 格式字符串，单位数补零。
+ * 注意：返回静态缓冲区指针，非线程安全。
  */
 char *get_time_str(int time_min){
     memset(time,'\0',sizeof(time));
@@ -37,7 +46,8 @@ char *get_time_str(int time_min){
 }   
 
 /**
- * 返回分钟转换的小时、分钟字符串 单位数补0
+ * 将分钟数转换为 "HH:MM" 格式字符串，其中冒号（:)用黑色隐藏实现闪烁效果。
+ * 需配合 lv_label_set_recolor(label, true) 使用。
  */
 char *get_time_str_nosymbol(int time_min){
     memset(time,'\0',sizeof(time));
@@ -60,6 +70,10 @@ char *get_time_str_nosymbol(int time_min){
 }
 
 
+/**
+ * 信号回调函数：捕获常见致命信号，打印日志后调用 _exit(1) 退出。
+ * 防止因捕获 SIGSEGV 等信号后无限重入导致死机。
+ */
 static void signal_callback_func(int sig_no)
 {
     printf("signal %d, exiting ...\n", sig_no);
@@ -67,6 +81,11 @@ static void signal_callback_func(int sig_no)
     printf("retry _exit ...\n");
 }
 
+/**
+ * 初始化系统信号处理。
+ * 注册 SIGINT/SIGQUIT/SIGTERM/SIGSEGV/SIGABRT/SIGBUS/SIGFPE/SIGILL/SIGTSTP
+ * 将它们都指向统一的退出函数，确保程序在崩溃时能打印日志。
+ */
 void system_signal_init(){
     signal(SIGINT, signal_callback_func);
     signal(SIGQUIT, signal_callback_func);

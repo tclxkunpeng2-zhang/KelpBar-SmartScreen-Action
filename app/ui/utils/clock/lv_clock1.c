@@ -1,4 +1,8 @@
 
+/* 指针时钟样式1实现
+ * 使用 icon_dial1.png 表盘和对应的时/分/秒针图片，
+ * 通过 lv_img_set_angle 模拟指针旋转（与 lv_clock0 结构相同，仅图片资源不同）。
+ */
 
 #include "lv_clock.h"
 
