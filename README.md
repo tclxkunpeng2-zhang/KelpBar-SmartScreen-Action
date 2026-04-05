@@ -49,8 +49,17 @@ adb push build/app/demo /usr/bin/
  ./usr/bin/demo & 
 修改后，记得保存，最好用reboot重启确保可以完全写入
 
-更多课程：
-https://space.bilibili.com/383943678?spm_id_from=333.788.0.0
 
 
 ```
+
+## 修改记录
+
+学习进度
+已完成 `page_about_us` 页面结构分析、`about` 相关图片尺寸确认，以及替换图片的压缩处理方案梳理。
+
+修改内容
+分析了 `page_about_us` 页面中的标题、二维码、背景图资源引用位置；确认 `icon_about_us.png` 为 `32x32`、`icon_qrcode.png` 为 `163x161`、`bg_about_us.png` 为 `280x280`；补充了大图替换时的压缩与缩放建议，并定位了 `t113` 交叉编译报错中 `-lz` 缺失的原因。
+
+修改人
+`zkp_vencent`
