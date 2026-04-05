@@ -1,0 +1,18 @@
+# 编译产物
+build/
+bin/
+obj/
+*.o
+*.a
+*.so
+
+# 缓存与日志
+*.log
+.cache/
+
+# VS Code 配置
+.vscode/
+
+# 临时文件
+*.swp
+*~
